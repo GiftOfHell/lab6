@@ -1,0 +1,44 @@
+name: Deployment
+
+defaults:
+  run:
+    working-directory: .
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  tests:
+    name: Tests
+    runs-on: ubuntu-latest
+    env:
+      MONGODB_URI: 'mongodb://127.0.0.1:27017/lab'
+      PORT: 3000
+
+    steps:
+      - name: Copy Repo Files
+        uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 20
+      - name: Run db
+        run: docker-compose up
+      - name: Run npm install packages
+        run: npm install
+      - name: Run Backend tests
+        run: npm run test
+      - name: Checkout
+        uses: actions/checkout@v3
+
+  deploy:
+    name: Deployment
+    runs-on: ubuntu-latest
+    needs: tests
+
+    steps:
+      - name: Deploy to production
+        uses: johnbeynon/render-deploy-action@v0.0.8
+        with:
+          service-id: ${{ secrets.MY_RENDER_SERVICE_ID }}
+          api-key: ${{ secrets.MY_RENDER_API_KEY }}
