@@ -11,7 +11,7 @@ app.post("/orders", async (req, res) => {
   try {
     const order = new orderService(req.body);
     await order.save();
-    res.status(201).send(order);
+    res.status(200).send(order);
   } catch (error) {
     res.status(400).send(error);
   }
