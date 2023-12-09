@@ -23,7 +23,7 @@ jobs:
         with:
           node-version: 20
       - name: Run db
-        run: docker-compose up
+        run: docker-compose up -d
       - name: Run npm install packages
         run: npm install
       - name: Run Backend tests
